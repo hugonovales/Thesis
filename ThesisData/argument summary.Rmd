@@ -1,0 +1,72 @@
+---
+title: "argument summary"
+author: "Hugo Novales"
+date: '2022-05-31'
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+
+library(tidyverse)
+library(ggplot2)
+load("vdem_gt_sv.rda")
+load("vdem_ERT_transition_test.rda")
+```
+
+When we only look at democracies which are backsliding, there are some elite biased democracies which backslide even with a more constrained executive (top left quadrant), more so than in popular democracies, which mostly backslide with an uconstrained executive (bottom right). 
+
+This is not a causal explanation, but aims to show that this sometimes happens. Not all democracies need a strong executive (or a weakening of exec constraints) to backslide. 
+
+PROBLEM WITH THIS ARGUMENT: Thesis based on differences between elite-biased and popular democracies. Data does not show any relevant differences. While it does show that some democracies do backslide with constrained executives, this happens on both dem. types. 
+
+Should summarize data to make democratic spells (transition to regression) unit of analysis instead of country-year. 
+
+
+```{r plots 1, echo = FALSE}
+
+subset(vdem_ERT_transition_test, aut_ep == "Backsliding")%>%
+  ggplot(aes(elite_bias_am2018,cut_interval(vdem_full.v2x_libdem, 2))) + 
+  geom_jitter()
+
+subset(vdem_ERT_transition_test, !is.na(aut_ep))%>%ggplot(aes(elite_bias_am2018,vdem_full.v2x_libdem, 2)) + geom_boxplot() + facet_wrap(~aut_ep)
+```
+
+Both in backsliding and stable democracies, more constrained executives are _slightly_ more common in elite biased than in popular democracies.This is not new.  Constrained executives, while usually associated with higher dem. quality, are not an impediment for backsliding. 
+
+```{r plots 2, echo = FALSE}
+subset(vdem_ERT_transition_test, !is.na(aut_ep))%>%ggplot(aes(elite_bias_am2018,mean(vdem_full.v2x_libdem, 2))) + geom_col() + facet_wrap(~aut_ep)
+
+subset(vdem_ERT_transition_test, !is.na(aut_ep))%>%ggplot(aes(elite_bias_am2018, vdem_full.v2x_libdem, 2)) + geom_jitter() + facet_wrap(~aut_ep)
+
+```
+
+Interestingly, this happens a lot in Eastern Europe. What makes those regimes different? Not important right now, but curious. 
+
+```{r plot region, echo = FALSE}
+
+subset(vdem_ERT_transition_test, aut_ep == "Backsliding")%>%ggplot(aes(elite_bias_am2018,cut_interval(vdem_full.v2x_libdem, 2))) + geom_jitter() + facet_wrap(~region)
+
+```
+
+# Case selection for small-n comparison
+
+``` {r plots cases, echo = FALSE }
+
+vdem_gt_sv<-subset(
+  vdem_ERT_transition_test, 
+  subset = country_name == "Guatemala" | country_name == "El Salvador")
+vdem_gt_sv%>%
+  ggplot(aes(year, v2x_polyarchy.x)) + 
+  geom_line(aes(color = country_name))
+
+vdem_gt_sv%>%
+  ggplot(aes(year)) + 
+  geom_line(aes(y = log(v2x_polyarchy.x), color = "v2x_polyarchy.x"))+ 
+   geom_line(aes(y = log(vdem_full.v2x_libdem), color = "vdem_full.v2x_libdem"))+ 
+  facet_wrap(~country_name)
+
+```
+Guatemalan and Salvadorean regimes trace closely from transition years on. Before that, see Mahoney for how they trace closely since 1800s.  This allows for a "most similar cases" comparison. 
+
+They diverged for a while in the 2010s, when El Salvador was ruled by FMLN. Polarization during this time increased in SV.  Both democracies differ in what Przeworski wold say explains backsliding: Too much at stake vs. nothing at stake at all. Highly polarized politics in El Salvador, vs. centripetal and elite-constrained politics in Guatemala. In El Salvador, democratic backsliding corresponds with Slater's careening: a conflict between horizontal and vertical accountability. A popular president and his majority in an elected assembly claim legitimacy to annul judicial branch. In Guatemala, president is unpopular and legislature is highly fragmented (also unpopular). Horizontal accountability is annuled without vertical accountability. Finally, El Salvador now has a redistributive(?) regime (ANEP expulsion), and faces opposition from elites,  while Guatemalan elites support backsliding and mantain their hold on key redistributive institutions. 
+

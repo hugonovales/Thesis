@@ -1,0 +1,3 @@
+ 		 v2xlg_legcon v2x_jucon  El Salvador         0.473     0.541 Guatemala           0.682     0.635
+ Latin America       0.688     0.337
+ World               0.831     0.849
